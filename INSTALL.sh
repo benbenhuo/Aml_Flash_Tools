@@ -10,12 +10,12 @@ DISTRIB=$(cat /etc/lsb-release | grep "DISTRIB_ID" | awk -F "=" '{print $2}')
 DISTRIB_RELEASE=$(cat /etc/lsb-release | grep "DISTRIB_RELEASE" | awk -F "=" '{print $2}')
 
 prepare_host() {
-	local hostdeps="libusb-dev git parted lib32z1 lib32stdc++6 libusb-0.1-4 libusb-1.0-0-dev libusb-1.0-0 ccache pv base-files linux-base"
+	local hostdeps="libusb-0.1-4:armhf usbu*:armhf libc6:armhf"
 	local deps=()
 	local installed=$(dpkg-query -W -f '${db:Status-Abbrev}|${binary:Package}\n' '*' 2>/dev/null | grep '^ii' | awk -F '|' '{print $2}' | cut -d ':' -f 1)
 
 	if [[ "$DISTRIB" == "Ubuntu" ]] && [[ "$DISTRIB_RELEASE" == "18.10" || "$DISTRIB_RELEASE" =~ "20" ]]; then
-		hostdeps="$hostdeps lib32ncurses6"
+		hostdeps="$hostdeps "
 	else
 		hostdeps="$hostdeps"
 	fi
@@ -27,7 +27,8 @@ prepare_host() {
 	if [[ ${#deps[@]} -gt 0 ]]; then
 		echo "Installing dependencies"
 		echo "Requires root privileges, please enter your passowrd!"
-		sudo apt update
+           sudo dpkg --add-architecture armhf 
+            sudo apt update 
 		sudo apt -y --no-install-recommends install "${deps[@]}"
 		sudo update-ccache-symlinks
 	fi
@@ -85,5 +86,6 @@ else
 fi
 
 sudo udevadm control --reload-rules
+sudo udevadm trigger
 
 echo "Done!"
