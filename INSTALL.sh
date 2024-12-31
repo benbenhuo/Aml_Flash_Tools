@@ -27,8 +27,11 @@ prepare_host() {
 	if [[ ${#deps[@]} -gt 0 ]]; then
 		echo "Installing dependencies"
 		echo "Requires root privileges, please enter your passowrd!"
-           sudo dpkg --add-architecture armhf 
+            karch=$(uname -m)
+            if [ "$karch" = "aarch64" ] || [ "$karch" = "aarch64-linux-gnu" ] || [ "$karch" = "arm64" ] || [ "$karch" = "aarch64_be" ]; then  
+            sudo dpkg --add-architecture armhf 
             sudo apt update 
+            fi
 		sudo apt -y --no-install-recommends install "${deps[@]}"
 		sudo update-ccache-symlinks
 	fi

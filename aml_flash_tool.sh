@@ -10,7 +10,7 @@ efuse_file=
 password=
 destroy=
 update_return=
-debug=0
+debug=1
 simu=0
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -18,7 +18,7 @@ YELLOW='\033[0;33m'
 CYAN='\033[0;36m'
 RESET='\033[m'
 TOOL_PATH="$(cd $(dirname $0); pwd)"
-SYSTEM='linux-x86'
+SYSTEM='linux-arm'
 EXE=
 
 # Helper
@@ -44,9 +44,7 @@ check_file()
 {
     if [[ "$simu" != "1" ]]; then
        if [[ ! -f $1 ]]; then
-          echo "$1 not found"
-          cleanup
-          exit 1
+          echo "$1
        fi
     fi
 }
@@ -765,9 +763,6 @@ if [[ "$parts" == "all" ]] || [[ "$parts" == "bootloader" ]] || [[ "$parts" == "
          run_update_assert partition bootloader "$bootloader_file"
          echo -e $GREEN"[OK]"$RESET
 
-         echo -n "Writing device tree "
-         run_update_assert mwrite $dtb_file mem dtb normal
-         echo -e $GREEN"[OK]"$RESET
       fi
    fi
    if [[ "$parts" != "none" ]]; then
